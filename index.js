@@ -1,7 +1,8 @@
-
-        let users = JSON.parse(localStorage.getItem('expenseTrackerUsers')) || [];
+let users = JSON.parse(localStorage.getItem('expenseTrackerUsers')) || [];
         let currentUser = null;
         let expenses = JSON.parse(localStorage.getItem('expenseTrackerExpenses')) || {};
+        let isEditing = false;
+        let currentEditId = null;
         
         let signupView = document.getElementById('signupView');
         let loginView = document.getElementById('loginView');
@@ -29,7 +30,7 @@
         
         signupForm.addEventListener('submit', handleSignup);
         loginForm.addEventListener('submit', handleLogin);
-        expenseForm.addEventListener('submit', addExpense);
+        expenseForm.addEventListener('submit', handleExpenseSubmit);
         searchBtn.addEventListener('click', searchExpense);
         logoutBtn.addEventListener('click', logout);
         
@@ -140,12 +141,25 @@
                     <td>${expense.name}</td>
                     <td>$${expense.amount.toFixed(2)}</td>
                     <td>${expense.date}</td>
+                    <td class="actions" style="height:45px;">
+                        <i class="fas fa-edit action-icon edit-icon" data-id="${expense.id}"></i>
+                        <i class="fas fa-trash action-icon delete-icon" data-id="${expense.id}"></i>
+                    </td>
                 `;
                 expensesList.appendChild(row);
             });
+
+            // Add event listeners to edit and delete icons
+            document.querySelectorAll('.edit-icon').forEach(icon => {
+                icon.addEventListener('click', editExpense);
+            });
+            
+            document.querySelectorAll('.delete-icon').forEach(icon => {
+                icon.addEventListener('click', deleteExpense);
+            });
         }
         
-        function addExpense(e) {
+        function handleExpenseSubmit(e) {
             e.preventDefault();
             
             if (!currentUser) return;
@@ -154,22 +168,64 @@
             let amount = parseFloat(document.getElementById('expenseAmount').value);
             let date = document.getElementById('expenseDate').value;
             
-            let newExpense = {
-                id: Date.now().toString(),
-                name,
-                amount,
-                date,
-            };
-            
-            if (!expenses[currentUser.id]) {
-                expenses[currentUser.id] = [];
+            if (isEditing) {
+                let expenseIndex = expenses[currentUser.id].findIndex(exp => exp.id === currentEditId);
+                if (expenseIndex !== -1) {
+                    expenses[currentUser.id][expenseIndex] = {
+                        id: currentEditId,
+                        name,
+                        amount,
+                        date
+                    };
+                }
+                isEditing = false;
+                currentEditId = null;
+                document.querySelector('#expenseForm button').textContent = 'Add Expense';
+            } else {
+                let newExpense = {
+                    id: Date.now().toString(),
+                    name,
+                    amount,
+                    date,
+                };
+                
+                if (!expenses[currentUser.id]) {
+                    expenses[currentUser.id] = [];
+                }
+                
+                expenses[currentUser.id].push(newExpense);
             }
             
-            expenses[currentUser.id].push(newExpense);
             localStorage.setItem('expenseTrackerExpenses', JSON.stringify(expenses));
-            
             expenseForm.reset();
             loadExpenses();
+        }
+        
+        function editExpense(e) {
+            const expenseId = e.target.getAttribute('data-id');
+            const expenseToEdit = expenses[currentUser.id].find(exp => exp.id === expenseId);
+            
+            if (expenseToEdit) {
+                isEditing = true;
+                currentEditId = expenseId;
+                
+                document.getElementById('expenseName').value = expenseToEdit.name;
+                document.getElementById('expenseAmount').value = expenseToEdit.amount;
+                document.getElementById('expenseDate').value = expenseToEdit.date;
+                
+                document.querySelector('#expenseForm button').textContent = 'Update Expense';
+                
+                document.getElementById('expenseForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        function deleteExpense(e) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                const expenseId = e.target.getAttribute('data-id');
+                expenses[currentUser.id] = expenses[currentUser.id].filter(exp => exp.id !== expenseId);
+                localStorage.setItem('expenseTrackerExpenses', JSON.stringify(expenses));
+                loadExpenses();
+            }
         }
         
         function searchExpense() {
@@ -201,6 +257,8 @@
         
         function logout() {
             currentUser = null;
+            isEditing = false;
+            currentEditId = null;
             localStorage.removeItem('expenseTrackerCurrentUser');
             dashboardView.classList.remove('active');
             loginView.classList.add('active');

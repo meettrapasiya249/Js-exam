@@ -1,205 +1,152 @@
-/* Enhanced Expense Tracker with Background Integration */
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(rgba(40, 62, 81, 0.85), rgba(40, 62, 81, 0.85)), 
-                url('https://www.cardiff.ac.uk/__data/assets/image/0003/2580258/iStock-1061369956-Cropped.jpg');
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    color: #fff;
-    line-height: 1.6;
+    background: url("https://www.digital-energy.ru/wp-content/uploads/2019/10/analytics.jpg") no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
 }
 
 .view {
     display: none;
-    min-height: 100vh;
+    max-width: 500px;
+    margin: 50px auto;
     padding: 20px;
-    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .view.active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.12);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 500px;
-    margin: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 20px;
 }
 
-h2 {
+h2, h3 {
+    color: #333;
     text-align: center;
-    color: #fff;
-    margin-bottom: 25px;
-    font-size: 28px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-h3 {
-    color: #fff;
-    margin-top: 25px;
-    margin-bottom: 15px;
-    font-size: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 8px;
-}
-
-/* Form Styles */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     box-sizing: border-box;
-    transition: all 0.3s;
-}
-
-input:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-    background: #fff;
-}
-
-.error {
-    color: #ff6b6b;
-    font-size: 14px;
-    margin-top: 5px;
-    height: 18px;
 }
 
 button {
-    background-color: #3498db;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    font-weight: 600;
-    width: 100%;
-    transition: all 0.3s;
 }
 
 button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #45a049;
 }
 
-#signbtn {
-    background-color: #2ecc71;
-}
-
-#signbtn:hover {
-    background-color: #27ae60;
-}
-
-.logout-btn {
-    background-color: #e74c3c;
-    margin-top: 30px;
-}
-
-.logout-btn:hover {
-    background-color: #c0392b;
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
 }
 
 .footer-text {
     text-align: center;
     margin-top: 20px;
-    color: rgba(255, 255, 255, 0.7);
 }
 
-a {
-    color: #3498db;
+.footer-text a {
+    color: #4CAF50;
     text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.3s;
 }
 
-a:hover {
-    color: #2980b9;
+.footer-text a:hover {
     text-decoration: underline;
 }
 
-/* Dashboard Styles */
-.search-container {
-    background-color: rgba(0, 0, 0, 0.15);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-#searchBtn {
-    margin-top: 10px;
-    background-color: #9b59b6;
-}
-
-#searchBtn:hover {
-    background-color: #8e44ad;
-}
-
-/* Table Styles */
-table {
+#expensesTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
 }
 
-th, td {
-    padding: 12px 15px;
+#expensesTable th, #expensesTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
 }
 
-th {
-    background-color: rgba(0, 0, 0, 0.2);
-    font-weight: 600;
+#expensesTable th {
+    background-color: #f2f2f2;
 }
 
-tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+.logout-btn {
+    margin-top: 20px;
+    background-color: #f44336;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-    .container {
-        padding: 20px;
-        margin: 10px;
-    }
-    
-    h2 {
-        font-size: 24px;
-    }
-    
-    input, button {
-        padding: 10px;
-    }
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.search-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.expense-details {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.action-icon {
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.edit-icon {
+    color: #2196F3;
+}
+
+.delete-icon {
+    color: #f44336;
+}
+
+.edit-icon:hover {
+    color: #0b7dda;
+}
+
+.delete-icon:hover {
+    color: #d32f2f;
 }
